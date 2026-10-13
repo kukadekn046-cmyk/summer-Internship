@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NEXUS Cyber Cafe | Premium Gaming Arena</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00ff9f;
+      --accent: #00ccff;
+      --dark: #0a0a0a;
+      --card: #111118;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--dark);
+      color: #e0e0e0;
+      font-family: 'Inter', sans-serif;
+      overflow-x: hidden;
+      line-height: 1.6;
+    }
+
+    #motherboard { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.35; filter: blur(1px); }
+
+    header {
+      position: fixed;
+      top: 0; width: 100%;
+      background: rgba(10, 10, 10, 0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(0, 255, 159, 0.2);
+      padding: 16px 8%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      cursor: pointer;
+    }
+
+    .logo-img {
+      height: 58px;
+      filter: drop-shadow(0 0 15px var(--primary));
+      transition: all 0.4s ease;
+    }
+
+    .logo-container:hover .logo-img {
+      filter: drop-shadow(0 0 30px var(--primary));
+      transform: rotate(8deg);
+    }
+
+    nav a {
+      color: #ccc;
+      text-decoration: none;
+      margin-left: 32px;
+      font-weight: 500;
+      position: relative;
+      transition: 0.3s ease;
+    }
+
+    nav a:hover { color: var(--primary); }
+    nav a::after {
+      content: ''; position: absolute; width: 0; height: 2px; bottom: -6px; left: 0;
+      background: var(--primary); transition: width 0.4s ease;
+    }
+    nav a:hover::after { width: 100%; }
+
+    /* Mobile Menu */
+    .hamburger {
+      display: none;
+      font-size: 28px;
+      cursor: pointer;
+      color: var(--primary);
+    }
+
+    .cta {
+      padding: 18px 52px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: var(--primary);
+      color: #000;
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      transition: all 0.4s ease;
+    }
+
+    .cta:hover {
+      transform: translateY(-6px) scale(1.08);
+      box-shadow: 0 20px 50px rgba(0, 255, 159, 0.5);
+    }
+
+    section { padding: 100px 8%; }
+
+    .rig-card, .price-card {
+      transition: all 0.5s ease;
+      cursor: pointer;
+    }
+
+    .rig-card:hover, .price-card:hover {
+      transform: translateY(-20px) scale(1.03);
+      box-shadow: 0 25px 60px rgba(0, 255, 159, 0.25);
+    }
+
+    .selected {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 30px var(--primary) !important;
+    }
+
+    /* Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: #111118;
+      padding: 40px;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 500px;
+      border: 2px solid var(--primary);
+    }
+  </style>
+</head>
+<body>
+
+  <canvas id="motherboard"></canvas>
+
+  <header>
+    <div class="logo-container" onclick="window.scrollTo({top:0, behavior:'smooth'})">
+      <img src="aiLOGO.jpg" 
+           alt="NEXUS Logo" class="logo-img">
+      <div class="logo-text">NEXUS<span>.</span></div>
+    </div>
+    
+    <nav id="nav-menu">
+      <a href="#rigs">Gaming Rigs</a>
+      <a href="#pricing">Pricing</a>
+      <a href="#" onclick="openBookingModal()">Book Seat</a>
+      <a href="#events">Events</a>
+    </nav>
+    
+    <div class="hamburger" onclick="toggleMobileMenu()">☰</div>
+  </header>
+
+  <section class="hero">
+    <div class="hero-content">
+      <h1>Premium Cyber Cafe</h1>
+      <p>High-performance gaming rigs • Lightning-fast internet • Professional setup</p>
+      <button class="cta" onclick="openBookingModal()">Reserve Your Seat Now</button>
+    </div>
+  </section>
+
+  <section id="rigs">
+    <h2 class="section-title">Our High-End Gaming Rigs</h2>
+    <div class="rigs-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); gap: 30px;">
+      <div class="rig-card" onclick="selectRig(this)">
+        <h3>RTX TITAN</h3>
+        <p>RTX 4090 • Ryzen 9 7950X • 64GB DDR5 • 4K 240Hz</p>
+        <p style="color:var(--primary); margin-top:20px; font-size:1.3rem;">₹179 / hour</p>
+      </div>
+      <div class="rig-card" onclick="selectRig(this)">
+        <h3>ULTRA PRO</h3>
+        <p>RTX 4080 • i9-14900K • 32GB DDR5 • 1440p 360Hz</p>
+        <p style="color:var(--primary); margin-top:20px; font-size:1.3rem;">₹149 / hour</p>
+      </div>
+      <div class="rig-card" onclick="selectRig(this)">
+        <h3>VR EXPERIENCE</h3>
+        <p>RTX 4070 Ti • Ryzen 7 • Full VR Setup</p>
+        <p style="color:var(--primary); margin-top:20px; font-size:1.3rem;">₹129 / hour</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="pricing" style="background: #0f0f16;">
+    <h2 class="section-title">Simple & Transparent Pricing</h2>
+    <div class="pricing" style="display: flex; justify-content: center; gap: 30px; flex-wrap: wrap;">
+      <div class="price-card" onclick="selectPrice(this)">
+        <h3>NIGHT OWL</h3>
+        <h2 style="font-size:3rem; color:#00ff9f;">₹99</h2>
+        <p>per hour</p>
+      </div>
+      <div class="price-card" onclick="selectPrice(this)">
+        <h3>PREMIUM</h3>
+        <h2 style="font-size:3rem; color:#00ccff;">₹149</h2>
+        <p>per hour</p>
+      </div>
+      <div class="price-card" onclick="selectPrice(this)">
+        <h3>VIP CABIN</h3>
+        <h2 style="font-size:3rem; color:#ff00aa;">₹199</h2>
+        <p>per hour</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="live" id="live-counter">
+    <div class="live-dot"></div>
+    <span><strong id="online-count">47</strong> players online right now</span>
+  </div>
+
+  <!-- Booking Modal -->
+  <div class="modal" id="bookingModal">
+    <div class="modal-content">
+      <h2 style="margin-bottom:20px; color:var(--primary);">Book Your Gaming Seat</h2>
+      <input type="text" placeholder="Your Name" style="width:100%; padding:12px; margin:10px 0; background:#1a1a24; border:1px solid #00ff9f; color:white; border-radius:8px;">
+      <input type="text" placeholder="Phone Number" style="width:100%; padding:12px; margin:10px 0; background:#1a1a24; border:1px solid #00ff9f; color:white; border-radius:8px;">
+      <select style="width:100%; padding:12px; margin:10px 0; background:#1a1a24; border:1px solid #00ff9f; color:white; border-radius:8px;">
+        <option>Choose Rig Type</option>
+        <option>RTX TITAN</option>
+        <option>ULTRA PRO</option>
+        <option>VR EXPERIENCE</option>
+      </select>
+      <input type="datetime-local" style="width:100%; padding:12px; margin:10px 0; background:#1a1a24; border:1px solid #00ff9f; color:white; border-radius:8px;">
+      
+      <div style="margin-top:25px; display:flex; gap:15px;">
+        <button onclick="submitBooking()" style="flex:1; padding:14px; background:var(--primary); color:black; border:none; border-radius:8px; font-weight:600;">Confirm Booking</button>
+        <button onclick="closeModal()" style="flex:1; padding:14px; background:#333; color:white; border:none; border-radius:8px;">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="footer-content" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 50px; max-width: 1200px; margin: 0 auto;">
+      <div class="footer-col">
+        <h3>NEXUS</h3>
+        <p>Premium Gaming Arena in Latur, Maharashtra.<br>Where performance meets passion.</p>
+      </div>
+      <div class="footer-col">
+        <h3>Quick Links</h3>
+        <a href="#rigs">Gaming Rigs</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#" onclick="openBookingModal()">Book Seat</a>
+      </div>
+      <div class="footer-col">
+        <h3>Contact</h3>
+        <p>📍 MG Road, Latur, Maharashtra</p>
+        <p>📞 +91 98765 43210</p>
+        <p>✉️ hello@nexuscafe.in</p>
+        <p>🕒 Open 24 Hours</p>
+      </div>
+    </div>
+    <div class="footer-bottom" style="text-align:center; margin-top:70px; padding-top:25px; border-top:1px solid rgba(255,255,255,0.08);">
+      &copy; 2026 NEXUS Cyber Cafe. All Rights Reserved.
+    </div>
+  </footer>
+
+  <script>
+    // Canvas Background
+    const canvas = document.getElementById('motherboard');
+    const ctx = canvas.getContext('2d');
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener('resize', resize);
+    resize();
+
+    let nodes = [];
+    class Node {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = Math.random() * canvas.height;
+        this.size = Math.random() * 2.5 + 1;
+        this.speedX = (Math.random() - 0.5) * 0.8;
+        this.speedY = (Math.random() - 0.5) * 0.8;
+      }
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        if (this.x < 0 || this.x > canvas.width) this.speedX *= -1;
+        if (this.y < 0 || this.y > canvas.height) this.speedY *= -1;
+      }
+      draw() {
+        ctx.fillStyle = '#00ff9f';
+        ctx.shadowBlur = 8;
+        ctx.shadowColor = '#00ff9f';
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    for (let i = 0; i < 90; i++) nodes.push(new Node());
+
+    function animate() {
+      ctx.fillStyle = 'rgba(10, 10, 10, 0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+          const dx = nodes[i].x - nodes[j].x;
+          const dy = nodes[i].y - nodes[j].y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < 140) {
+            ctx.strokeStyle = `rgba(0, 255, 159, ${0.15 * (1 - dist/140)})`;
+            ctx.lineWidth = 0.8;
+            ctx.beginPath();
+            ctx.moveTo(nodes[i].x, nodes[i].y);
+            ctx.lineTo(nodes[j].x, nodes[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      nodes.forEach(node => { node.update(); node.draw(); });
+      requestAnimationFrame(animate);
+    }
+    animate();
+
+    // Live Counter
+    let online = 47;
+    setInterval(() => {
+      online = Math.floor(Math.random() * 20) + 45;
+      document.getElementById('online-count').textContent = online;
+    }, 3500);
+
+    // Rig Selection
+    function selectRig(el) {
+      document.querySelectorAll('.rig-card').forEach(card => card.classList.remove('selected'));
+      el.classList.add('selected');
+      el.style.transition = 'all 0.4s';
+    }
+
+    function selectPrice(el) {
+      document.querySelectorAll('.price-card').forEach(card => card.classList.remove('selected'));
+      el.classList.add('selected');
+    }
+
+    // Booking Modal
+    function openBookingModal() {
+      document.getElementById('bookingModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('bookingModal').style.display = 'none';
+    }
+
+    function submitBooking() {
+      alert("🎮 Booking Confirmed! Welcome to NEXUS. See you soon, Legend!");
+      closeModal();
+    }
+
+    // Mobile Menu
+    function toggleMobileMenu() {
+      const nav = document.getElementById('nav-menu');
+      nav.style.display = nav.style.display === 'flex' ? 'none' : 'flex';
+    }
+
+    // Smooth Scrolling
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+      anchor.addEventListener('click', function(e) {
+        if (this.getAttribute('href') !== '#') {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) target.scrollIntoView({ behavior: 'smooth' });
+        }
+      });
+    });
+
+    // Close modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('bookingModal');
+      if (event.target === modal) closeModal();
+    };
+  </script>
+</body>
+</html>
